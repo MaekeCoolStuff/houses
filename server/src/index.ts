@@ -1,8 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import { json, urlencoded } from 'body-parser';
-import { signup, signin } from './utils/auth';
+import { signup, signin, protect } from './utils/auth';
 import { connect } from './utils/db';
+import userRouter from './resources/user/user.router';
 
 const app = express();
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_USER_PASSWORD}@${process.env.DB_CLUSTER}.azure.mongodb.net/houses?retryWrites=true&w=majority`;
@@ -15,6 +16,9 @@ app.use(urlencoded({ extended: true }));
 
 app.post('/signup', signup);
 app.post('/signin', signin);
+
+app.use('/api', protect);
+app.use('/api/user', userRouter);
 
 export const start = async () => {
   try {
